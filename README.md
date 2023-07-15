@@ -4,7 +4,7 @@
 
 <h3>React App: https://stackblitz-starters-1vj3av.stackblitz.io<h3/>
   
-<h3>Vanilla Website: https://codesandbox.io/s/geolocationapitest-qtdhwd<h3/>
+<h3>Vanilla Website: https://qtdhwd.csb.app/<h3/>
 
 <hr />
 
