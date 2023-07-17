@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './style.css';
 
 const GeolocationAPIComponent = () => {
   const [coordinate, setCoordinate] = useState('');
   const [name, setName] = useState('');
+  const [showCoordinates, setShowCoordinates] = useState(false);
+  const [permissionDenied, setPermissionDenied] = useState(false);
 
-  const getLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
-    } else {
-      console.log('Geolocation API não tem suporte para o seu navegador.');
-    }
-  };
+  useEffect(() => {
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          showPosition,
+          handlePositionError
+        );
+      } else {
+        console.log('Geolocation API não tem suporte para o seu navegador.');
+      }
+    };
+
+    getLocation();
+  }, []);
 
   const showPosition = (position) => {
     setCoordinate('Carregando localização...');
@@ -31,6 +40,12 @@ const GeolocationAPIComponent = () => {
     }, 2000);
   };
 
+  const handlePositionError = (error) => {
+    if (error.code === error.PERMISSION_DENIED) {
+      setPermissionDenied(true);
+    }
+  };
+
   const handleNameChange = (event) => {
     setName(event.target.value);
   };
@@ -42,6 +57,8 @@ const GeolocationAPIComponent = () => {
 
     const jsonNameData = JSON.stringify(nameData);
     console.log('Name Data:', jsonNameData);
+
+    setShowCoordinates(true);
   };
 
   return (
@@ -56,18 +73,16 @@ const GeolocationAPIComponent = () => {
         onChange={handleNameChange}
       />
 
-      <button
-        onClick={() => {
-          displayInput();
-          getLocation();
-        }}
-      >
-        Mostrar informações
-      </button>
+      <button onClick={displayInput}>Mostrar informações</button>
 
-      <p>Nome: {name}</p>
-
-      <p>{coordinate}</p>
+      {permissionDenied ? (
+        <p>Permita o acesso a localização para acessar o sistema</p>
+      ) : (
+        <div>
+          <p>Nome: {name}</p>
+          {showCoordinates && <p>{coordinate}</p>}
+        </div>
+      )}
     </div>
   );
 };
